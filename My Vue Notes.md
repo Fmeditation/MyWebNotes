@@ -277,3 +277,185 @@ export default {
 - 在Vue的实例中，如果想要获取data里的属性、methods里面的方法，都要通过`this`来访问。这里的**this指向的是Vue的实例对象**。
 - VM实例，会监听自己身上 data 中所有数据的改变，只要数据一发生变化，就会自动把最新的数据，从 data 上同步到页面中去。这样做 的好处是：**程序员只需要关心数据，不需要考虑如何重新渲染DOM页面；减少DOM操作**。
 - 在调用定时器 id 的时候，代码是`this.intervalId`，防止定时器多开。
+- - **v-model 双向数据绑定**
+
+  ------
+
+  **区别**：
+
+  - v-bind：只能实现数据的**单向**绑定，从 M 自动绑定到 V。
+  - v-model：只有`v-model`才能实现**双向**数据绑定。注意，v-model 后面不需要跟冒号，、
+
+  **注意**：v-model 只能运用在**表单元素**中，或者用于自定义组件。常见的表单元素包括：input(radio, text, address, email....) 、select、checkbox 、textarea。
+
+  例中还涉及样式通过属性的绑定方法，以对象或数组的形式
+
+```vue
+<template>
+  <div class="father">
+    <input class="num first" type="text" v-model="n1">
+    <select v-model="opt">
+      <option value="+">+</option>
+      <option value="-">-</option>
+      <option value="*">*</option>
+      <option value="/">/</option>
+    </select>
+    <!-- 对象写法 -->
+    <!-- <input :class="{
+      num: true, first: true
+    }" type="text" v-model="n2"> -->
+    <!-- 数组写法 -->
+    <input type="text" :class="['num','first']" v-model="n2">
+    <input type="button" value="=" @click="calc">
+    <input type="text" v-model="result">
+</div>
+</template>
+<script>
+export default {
+  name:'app',
+  data() {
+    return {
+      n1:'',
+      n2:'',
+      result:'',
+      opt:'+'
+    }
+  },
+  methods: {
+    calc() {
+      switch (this.opt) {
+        case '+':
+          this.result = String(parseInt(this.n1) + parseInt(this.n2))
+          break;
+        case '-':
+          this.result = String(parseInt(this.n1) - parseInt(this.n2))
+          break;
+        case '*':
+          this.result =String( parseInt(this.n1) * parseInt(this.n2))
+          break;
+        case '/':
+          this.result = String(parseInt(this.n1) / parseInt(this.n2))
+          break;
+        default: 
+          break
+      }
+    },
+  }
+}
+</script>
+<style>
+  .num {
+    background-color: green;
+  }
+  .first {
+      height: 60px;
+  }
+</style>
+
+
+```
+
+**v-for的四种使用方式**
+
+------
+
+way1：普通数组的遍历
+
+```vue
+ 
+data: {
+  arr1: [2, 5, 3, 1, 1],
+}
+<li v-for="item in arr1">{{item}}</li>
+<!-- 括号里如果写两个参数：第一个参数代表值，第二个参数代表index 索引 -->
+<li v-for="(item,index) in arr1">值：{{item}} --- 索引：{{index}}</li>
+```
+
+way2：对象数组的遍历
+
+```vue
+data: {
+//对象数组
+dataList: [
+{ name: 'smyh', age: '26' },
+{ name: 'vae', age: '32' },
+{ name: 'xiaoming', age: '20' }
+]
+}
+<!-- 对象数组的遍历。括号里如果写两个参数：第一个参数代表数组的单个item，第二个参数代表 index 索引-->
+<li v-for="(item, index) in dataList">姓名：{{item.name}} --- 年龄：{{item.age}} --- 索引：{{index}}</li>
+
+
+```
+
+way3：对象的遍历
+
+```vue
+obj1: {
+name: 'qianguyihao',
+age: '26',
+gender: '男'
+}
+<!-- 括号里如果写两个参数：则第一个参数代表value，第二个参数代表key -->
+<li v-for="(value,key) in obj1">值：{{value}} --- 键：{{key}} </li>
+
+<h3>---分隔线---</h3>
+
+<!-- 括号里如果写三个参数：则第一个参数代表value，第二个参数代表key，第三个参数代表index -->
+<li v-for="(value,key,index) in obj1">值：{{value}} --- 键：{{key}} --- index：{{index}} </li>
+```
+
+way4：数字的遍历
+
+```vue
+<ul>
+    <!-- 对象数组的遍历 -->
+    <!-- 注意：如果使用 v-for 遍历数字的话，前面的 myCount 值从 1 开始算起 -->
+    <li v-for="myCount in 10">这是第 {{myCount}}次循环</li>
+</ul>
+```
+
+**注意**：在 Vue 2.2.0+ 版本里，当在**组件中**使用 v-for 时，key 属性是必须要加上的。
+
+这样做是因为：每次 for 循环的时候，通过指定 key 来标示当前循环这一项的**唯一身份**。
+
+> 当 Vue.js 用 v-for 正在更新已渲染过的元素列表时，它默认用 “**就地复用**” 策略。如果数据项的顺序被改变，Vue将**不是移动 DOM 元素来匹配数据项的顺序**， 而是**简单复用此处每个元素**，并且确保它在特定索引下显示已被渲染过的每个元素。
+
+> 为了给 Vue 一个提示，**以便它能跟踪每个节点的身份，从而重用和重新排序现有元素**，你需要为每项提供一个唯一 key 属性。
+
+key的类型只能是：string/number，而且要通过 v-bind 来指定。
+
+**v-if：设置元素的显示与隐藏**
+
+------
+
+**作用**：根据表达式的值的真假条件，来决定是否渲染元素，如果为false则不渲染（达到隐藏元素的目的），如果为true则渲染。
+
+在切换时，元素和它的数据绑定会被销毁并重建。
+
+**v-show:设置元素显示和隐藏**
+
+------
+
+**作用**：根据表达式的真假条件，来切换元素的 display 属性。如果为false，则在元素上添加 `display:none`属性；否则移除`display:none`属性。
+
+举例如下：（点击按钮时，切换和隐藏盒子）
+
+我们直接把上一段代码中的`v-if`改成`v-show`就可以了：
+
+`v-if`和`v-show`都能够实现对一个元素的隐藏和显示操作。
+
+区别：
+
+- v-if：每次都会重新添加/删除DOM元素
+- v-show：每次不会重新进行DOM的添加/删除操作，只是在这个元素上添加/移除`style="display:none"`属性，表示节点的显示和隐藏。
+
+优缺点：
+
+- v-if：有较高的切换性能消耗。这个很好理解，毕竟每次都要进行dom的添加／删除操作。
+- v-show：**有较高的初始渲染消耗**。也就是说，即使一开始`v-show="false"`，该节点也会被创建，只是隐藏起来了。而`v-if="false"`的节点，根本就不会被创建。
+
+**总结**：
+
+- 如果元素涉及到频繁的切换，最好不要使用 v-if, 而是推荐使用 v-show
+- 如果元素可能永远也不会被显示出来被用户看到，则推荐使用 v-if

@@ -459,3 +459,103 @@ key的类型只能是：string/number，而且要通过 v-bind 来指定。
 
 - 如果元素涉及到频繁的切换，最好不要使用 v-if, 而是推荐使用 v-show
 - 如果元素可能永远也不会被显示出来被用户看到，则推荐使用 v-if
+
+## 2.myTable实例
+
+```vue
+<template>
+  <div class="app">
+    <div dataSource>
+      <input type="text" v-model="formData.id" />
+      <input type="text" v-model="formData.name" />
+      <button @click="addFunc">add</button>
+      <input type="text" v-model="keyWords" />
+    </div>
+    <table class="myTabble">
+      <th>ID</th>
+      <th>name</th>
+      <th>time</th>
+      <th>operate</th>
+      <tr v-for="item in search(keyWords)" :key="item.id">
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.time }}</td>
+        <td><a href="#" @click="deleteItem(item.id)">delete</a></td>
+      </tr>
+      <tr v-if="formList.length == 0">
+        <td colspan="4">no data,add data first!</td>
+      </tr>
+    </table>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      formList: [
+        { id: 1, name: "儒学", time: new Date() },
+        { id: 2, name: "道教", time: new Date() },
+        { id: 3, name: "王阳明心学", time: new Date() },
+        { id: 4, name: "弗洛伊德", time: new Date() },
+      ],
+      formData: {
+        id: 0,
+        name: "",
+      },
+      keyWords: "",
+    };
+  },
+  methods: {
+    addFunc() {
+      const formItem = {
+        id: this.formData.id,
+        name: this.formData.name,
+        time: new Date(),
+      };
+      this.formList.push(formItem);
+      this.formData.id = 0;
+      this.formData.name = "";
+    },
+    deleteItem(id) {
+      const selectItem = this.formList.findIndex(function (item) {
+        return item.id == id;
+      });
+      this.formList.splice(selectItem, 1);
+    },
+    search(keyWords) {
+      const filterList = this.formList.filter((item) => {
+        if (item.name.includes(keyWords)) {
+          return item;
+        }
+      });
+      return filterList;
+    },
+  },
+};
+</script>
+
+<style>
+.myTabble {
+  width: 800px;
+  margin: 20px auto;
+  border-collapse: collapse; /*这一行，不能少：表格的两边框合并为一条*/
+}
+.myTabble th {
+  background: orange;
+  color: white;
+  font-size: 16px;
+  border: 1px solid black;
+  padding: 5px;
+}
+
+.myTabble tr td {
+  text-align: center;
+  font-size: 16px;
+  padding: 5px;
+  border: 1px solid black;
+}
+</style>
+
+```
+

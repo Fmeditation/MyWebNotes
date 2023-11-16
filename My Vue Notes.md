@@ -4,7 +4,7 @@
 
 ## 1.VUE的系统指令
 
-**插值表达式{{ msg}}**
+### **1.1 插值表达式{{ msg}}**
 
 ------
 
@@ -22,13 +22,13 @@
 
 但只能包含单个表达式
 
-**v-cloak**
+### **1.2 v-cloak**
 
 ------
 
 `v-cloak`：保持和元素实例的关联，直到结束编译后自动消失。eg:{{name}}，当网速慢时页面会一直显示name，到加载完成后才会显示name对应的值，使用v-cloak后，未加载完成前会一直隐藏name直到加载完成再显示
 
-**v-text**
+### 1.3 **v-text**
 
 ------
 
@@ -60,7 +60,7 @@ v-text可以将一个变量的值渲染到指定的元素中。例如：
 
 第二行代码中，只要浏览器中还没有解析到`v-text="name"`的时候，会显示`------++++++`；当解析到`v-text="name"`的时候，name的值会直接替换`------++++++`。
 
-**v-html**
+### **1.4 v-html**
 
 ------
 
@@ -78,7 +78,7 @@ v-text可以将一个变量的值渲染到指定的元素中。例如：
         }
 ```
 
-**v-bind**
+### 1.5 v-bind
 
 ------
 
@@ -94,7 +94,7 @@ v-text可以将一个变量的值渲染到指定的元素中。例如：
 
 也就是说， v-bind的属性值里，可以写合法的 js 表达式。
 
-**v-on** 
+### 1.6 v-on 
 
 ------
 
@@ -355,7 +355,7 @@ export default {
 
 ```
 
-**v-for的四种使用方式**
+### **1.7 v-for的四种使用方式**
 
 ------
 
@@ -554,6 +554,162 @@ export default {
   font-size: 16px;
   padding: 5px;
   border: 1px solid black;
+}
+</style>
+
+```
+
+## 3.自定义过滤器
+
+### 3.1 vue2过滤器
+
+------
+
+概念:vue允许我们自定义过滤器用于文本格式化，特别是在mustache插值表达式，v-bind表达式，过滤器被添加在JavaScript表达式的尾部，由管道符表示。
+
+全局过滤器的使用，全局方法vue.filter()，接受两个参数：过滤器的名称，过滤器函数。
+
+*题外话：看到日期格式化的例子中，getmont()+1的值才是真正的月份，这是因为getmonth返回的其实是索引(从09开始)*
+
+### 3.2  时间格式化
+
+------
+
+ES6字符串新方法：`String.prototype.padStart(maxLength, fillString='')` 或 `String.prototype.padEnd(maxLength, fillString='')`来填充字符串。 `pad`在英文中指的是`补充`。
+
+```VUE
+<template>
+  <div class="father">
+    <!-- <p>{{ msg | msgFormat }}</p > -->
+    <p>{{ datefmt(msg) }}</p >
+</div>
+</template>
+<script>
+// import { Vue } from 'vue-class-component';
+
+// g表示全局匹配，fliter在vue3中已经弃用
+// Vue.filter('msgFormat',function(msg) {
+//       return msg.replace(/session/g,'snapshot')
+//     })
+//过滤函数可以有多个参数 function (myMsg, arg2, arg3)
+//过滤中的管道符可以传递 {{msg | filter1 | filter2}}
+
+export default {
+  name:'app',
+  data() {
+    return {
+      msg: new Date
+    }
+  },
+  methods: { 
+    datefmt(input) {
+        let res;
+        // const year=input.getFullYear();
+        // const month =input.getMonth();
+        // const day=input.getDate();
+
+        //ES6写法
+        const year=input.getFullYear().toString().padStart(2,'0');
+        const month =input.getMonth().toString().padStart(2,'0');
+        const day=input.getDate().toString().padStart(2,'0');
+
+        res=year+'-'+month+'-'+day;
+        return res;
+      }
+  }
+}
+</script>
+<style>
+  .num {
+    background-color: green;
+  }
+  .first {
+      height: 60px;
+  }
+</style>
+
+```
+
+4.自定义按键修饰符&自定义修饰指令
+
+4.1 v-on的按键修饰符
+
+```
+    .enter
+    .tab
+    .delete (捕获 “删除” 和 “退格” 键)
+    .esc
+    .space
+    .up
+    .down
+    .left
+    .right
+    1.0.8+版本：支持单字母的按键别名。
+```
+
+keyup指的是任何键位的抬起，.enter指的是ernter键的修饰符，两者结合： @keyup.enter      enter键抬起后。
+
+F2键没有效果，因为F2键不是内置的按键修饰符，但是每个按键都有对应的按键码，F2对应113，于是便有 @keyup.113，还可以给键盘码定义别名。
+
+```vue
+ vue.config.keyCodes.f2=113;
+```
+
+4.2 自定义全局指令
+
+vue.direvtive()   自定义全局指令：
+
+```js
+//自定义全局指令让文本自动获取焦点 v-focus；
+//参数1：指令名称；
+//参数二：一个对象，指令的相关函数，特定阶段执行相关的操作。
+vue.directive('focus',{
+bind:function(e1) {
+},
+inserted:function(e1) {
+},
+updated:function(e1) {
+}
+})
+
+//e1:元素
+//bind： 指令绑定到元素上时执行，此时元素还没有插入到DOM中，因此在bind里写focus不会生效，因为只有插入到DOM中才会有焦点；
+//inserted: 元素插入到DOM中时执行；
+//VNode： 当VNode更新时，执行updated。
+//这三个函数也叫钩子函数
+```
+
+```vue
+<template>
+  <div class="app">
+    <p>llllllllllllllllllllll</p>
+    <input type="text" id="search" v-model="name" v-focus />
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: "daijiubu",
+    };
+  },
+  directive: {
+    focus: {
+      inserted: function (el) {
+        el.focus();
+      },
+    },
+  },
+  methods: {
+    test() {
+    }
+  }
+};
+</script>
+<style>
+#search {
+  height: 150;
 }
 </style>
 

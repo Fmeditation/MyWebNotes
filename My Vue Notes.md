@@ -630,9 +630,13 @@ export default {
 
 ```
 
-4.自定义按键修饰符&自定义修饰指令
+## 4.自定义按键修饰符&自定义修饰指令
 
-4.1 v-on的按键修饰符
+### 4.1 v-on的按键修饰符
+
+------
+
+
 
 ```
     .enter
@@ -655,7 +659,9 @@ F2键没有效果，因为F2键不是内置的按键修饰符，但是每个按�
  vue.config.keyCodes.f2=113;
 ```
 
-4.2 自定义全局指令
+### 4.2 自定义全局指令
+
+------
 
 vue.direvtive()   自定义全局指令：
 
@@ -715,3 +721,79 @@ export default {
 
 ```
 
+## 5.VUE实例的生命周期函数
+
+beforeCreate：实例刚在内存中被创建出来，还没初始化好data和methods属性；
+
+created：实例在内存中已创建ok，data和methods已创建ok，此时还没有编译模板，可以在这里进行ajax请求；
+
+beforeMount：完成了模板的编译，还没有挂载到页面中；
+
+mounted：编译好的模板已经挂碍到指定页面容器中，真实DOM被渲染了，可以操纵DOM了；
+
+beforeUpdate：状态更新之前执行函数，data中的数据已是最新，但没重新开始渲染的DOM结点不是；
+
+updated：实例更新完毕之后调用，数据和DOM结点都是最新的；
+
+beforeDestroy：实例销毁前调用，此时实例仍然完全可用；可以这时清楚定时器或清除事件绑定；
+
+destroyed：Vue实例销毁后调用，之后实例调用的所有东西都会被移除
+
+```vue
+<template>
+  <div class="father">
+<input type="button" value="modify flag" @click="mymethod">
+<h3>{{ flag }}</h3>
+</div>
+</template>
+<script>
+
+
+
+export default {
+  name:'app',
+  data() {
+    return {
+      msg:'chaos progressively',
+      flag:false
+    }
+  },
+  beforeCreate:function() {
+console.log('beforeCreate',this.msg)
+  },
+  created:function() {
+console.log('created',this.msg)
+  },
+  beforeMount:function() {
+console.log('beforeMount',this.msg)
+  },
+  mounted:function() {
+console.log('mounted',this.msg)
+  },
+  methods: { 
+    mymethod() {
+      this.flag=true
+    }
+  },
+  beforeUpdate:function() {
+    console.log('beforeUpdate',this.msg)
+    console.log('el show:',document.getElementById('h3').innerText())
+    console.log('data',this.flag)
+  },
+  updated:function() {
+    console.log('updated',this.msg)
+    console.log('el show:',document.getElementById('h3').innerText())
+    console.log('data',this.flag)
+  }
+}
+</script>
+<style>
+  .num {
+    background-color: green;
+  }
+  .first {
+      height: 60px;
+  }
+</style>
+
+```

@@ -797,3 +797,189 @@ console.log('mounted',this.msg)
 </style>
 
 ```
+
+## 6.Vue中的Ajax请求
+
+ Vue-resource
+
+高度集成的vue第三方包，vue.js文件向windows暴露了Vue这个关键词，vue-resource向vue挂载了this.http这个属性；
+
+get、post
+
+```vue
+//get
+this.$http.get("http://www.hikvison.com").then(function(response) {
+
+})
+//post
+this.$http.post("http://www.hikvison.com",{},{emulateJSON:true}).then(function(response) {
+
+})
+```
+
+## 7.vue组件
+
+### 7.1 全局组件：使用Vue.extend方法定义组件，使用Vue.component方法注册组件
+
+------
+
+
+
+```vue
+<template>
+  <div class="app">
+    <my-account></my-account>
+  </div>
+</template>
+<!--写法三：-->
+ <!-- <template id='my-account'> -->
+  <!-- <div>
+            <h2>登录页面</h2> -->
+            <!-- <h3>注册页面</h3>
+        </div> -->
+  <!-- </template> -->
+
+   <!--  <div id="app"> -->
+        <!--  <account> </account> -->
+      <!-- </div> -->
+      
+<script>
+
+
+//写法一：
+// const myAccount =Vue.extend({
+//   template:'<div><h2>登录页面</h2> <h3>注册页面</h3></div>'
+// })
+// Vue.component('my-account', myAccount)
+
+//写法二：一步到胃
+// Vue.component('my-account', {
+//   template:'<div><h2>登录页面</h2> <h3>注册页面</h3></div>'
+// })
+
+//写法三：
+// Vue.component('account',{
+//   template:'#account'
+// })
+
+
+export default {
+  data() {
+    return {
+      formList: [],
+      formData: {
+        id: 0,
+        name: "",
+      },
+      keyWords: "",
+    };
+  },
+};
+</script>
+
+<style>
+
+</style>
+
+```
+
+### 7.2 私有组件
+
+------
+
+
+
+```vue
+<template id='loginTemp'>
+  <div class="app">
+  </div>
+  </template>   
+  <mylogin></mylogin> 
+ 
+
+<script>
+export default {
+  data() {
+    return {
+      formList: [],
+      formData: {
+        id: 0,
+        name: "",
+      },
+      keyWords: "",
+    };
+  },
+  components: {
+    mylogin:{
+      template:'#loginTemp'
+    }
+  }
+};
+</script>
+<style>
+</style>
+
+```
+
+### 7.3 组件间传值
+
+------
+
+**父组件向子组件传值：props**
+传值步骤：
+
+在子组件的props属性中声明父亲传过来的数据；
+
+定义子组件模板时，适用props中的属性；
+
+父组件在引用子组件时，进行属性绑定；
+
+子组件中，data和props的区别：
+
+data可读可写，props可读，不可重新赋值
+
+即可传递data中的属性也可传递方法
+
+```vue
+//传递data
+<component1 v-bind:parent-msg="msg"></component1>
+  props: ['parentMsg'],
+//传递方法
+ <component1 @parent-show='show'></component1>
+methods: {
+                show: function () { // 定义父组件的show方法
+                    console.log('父组件提供的方法');
+                }
+            },
+//只要在子组件中
+  this.$emit('parent-show');
+即可实现
+```
+
+
+
+**子组件向父组件传值**
+在emit中作为含参传出即可
+
+7.4 通过ref属性获取DOM元素
+
+我们当然可以使用JS原生的做法（document.getElementById）或者 jQuery 来获取DOM，但是这种做法却在无形中操作了DOM，在Vue框架中并不推荐这种做法。
+
+我们可以通过`ref`属性获取DOM元素。
+
+**在Vue中，通过 ref 属性获取DOM元素**的步骤：
+
+（1）第一步：在标签中给 DOM 元素设置 ref 属性。
+
+```vue
+    <h3 id="myH3" ref="myTitle"> 今天天气太好了</h3>
+```
+
+
+
+（2）第二步：通过 this.this.$refs.xxx 获取 DOM 元素
+
+```vue
+console.log(this.$refs.myTitle.innerText)
+```
+

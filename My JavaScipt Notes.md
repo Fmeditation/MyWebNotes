@@ -1010,7 +1010,7 @@ f()
 
 但如果因代码质量不高，滥用闭包，也会造成内存泄漏。
 
-## 闭包面试题
+## 
 
 代码举例：
 
@@ -1469,3 +1469,35 @@ per1._proto_
 - 如果没有则会去原型对象中寻找，如果找到则直接使用；
 - 如果没有则去原型的原型中寻找，直到找到Object对象的原型。
 - Object对象的原型没有原型，如果在Object原型中依然没有找到，则返回 null
+
+## 2.JS ES6语法
+
+### 2.1 严格模式
+
+JS的语法具有灵活性，随便写一个变量x，这个x是在windows下面的，难免会造成污染，故引入strict mode
+
+use  strict
+
+1.必须用var声明变量；
+
+2.禁止this指向全局对象；
+
+3.构造函数必须通过new 实例化对象；
+
+4.严格模式下属性不可重复；
+
+```js
+var myfun = function() {
+	console.log(this)
+}
+//undefined
+
+var person = new Person(naem) {
+    this.naem=name;
+}
+//普通模式下正常，严格模式下，打印name为undefined
+```
+
+3.var 、let、const的区别
+
+var声明的变量会挂载在window对象上

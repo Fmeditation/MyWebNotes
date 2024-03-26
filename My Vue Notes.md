@@ -983,3 +983,6 @@ methods: {
 console.log(this.$refs.myTitle.innerText)
 ```
 
+8. Router
+
+   
